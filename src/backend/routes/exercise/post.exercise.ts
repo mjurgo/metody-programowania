@@ -1,10 +1,11 @@
 import { Request, Response } from 'express'
-import { authorize } from '../../utils/middleware.utils'
 import { body } from 'express-validator'
-import { handleRequest } from '../../utils/request.utils'
 import { StatusCodes } from 'http-status-codes'
-import { prisma } from '../../database'
+
+import { authorize } from '../../utils/middleware.utils'
+import { handleRequest } from '../../utils/request.utils'
 import { TRoute } from '../types'
+import { ExerciseRepository } from '../../repositories/exercise/ExerciseRepository'
 
 export default {
     method: "post",
@@ -21,14 +22,9 @@ export default {
             responseSuccessStatus: StatusCodes.CREATED,
             messages: {},
             execute: async () => {
-                const { name, description } = req.body
+                const repository = new ExerciseRepository
 
-                return await prisma.exercise.create({
-                    data: {
-                        name,
-                        description,
-                    }
-                })
+                return repository.create(req.body)
             },
         })
     }

@@ -9,6 +9,8 @@ export const authorize = (req: Request, res: Response, next: NextFunction) => {
     const parsedToken = token?.replace('Bearer ', '')
     const result = verifyToken(parsedToken ?? '', SECRET)
 
+    res.locals.userEmail = result.content["email"]
+
     if (!token || !result.isValid) {
         res.sendStatus(StatusCodes.UNAUTHORIZED).json({
             errors: [ReasonPhrases.UNAUTHORIZED],

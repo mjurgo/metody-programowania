@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 
-import { prisma } from '../../database'
 import { TRoute } from '../types'
 import { TCustomError, handleRequest } from '../../utils/request.utils'
+import { ExerciseRepository } from '../../repositories/exercise/ExerciseRepository'
 
 export default {
     method: "get",
@@ -16,13 +16,10 @@ export default {
             responseSuccessStatus: StatusCodes.OK,
             responseFailStatus: StatusCodes.UNAUTHORIZED,
             execute: async () => {
+                const repository = new ExerciseRepository
                 const exerciseId = parseInt(req.params.id)
-                const exercise = await prisma.exercise.findFirst({
-                    where: {
-                        id: exerciseId
-                    }
-                })
-                
+                const exercise = await repository.getById(exerciseId)
+
                 if (!exercise) {
                     throw {
                         status: StatusCodes.NOT_FOUND,
